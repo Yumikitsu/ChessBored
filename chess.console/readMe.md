@@ -1,1 +1,1 @@
-﻿Chess game simulation in console window.
+﻿Chess game simulation in console window. 
