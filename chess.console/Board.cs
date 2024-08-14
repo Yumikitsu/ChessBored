@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace chess.console
 {
-    internal class Board
+    public class Board
     {
+        //List of board positions
+
+        //List of pieces
+
+        //Reset function
+
+        //CheckIfCheckmate
+
+        //bool currentTurn (false = black / true = white)
+
+        //Check collision
     }
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace chess.console
 {
-    internal class King
+    public class King
     {
+        //Move
     }
 }

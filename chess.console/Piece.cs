@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace chess.console
 {
-    internal class Piece
+    public class Piece
     {
+        //Color (Black/White)
+
+        //Position (2D)
+
+        //State (Dead/Alive)
+
+        //Override Move function
     }
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace chess.console
 {
-    internal class Knight
+    public class Knight
     {
+        //Move (Only check if destination is free or enemy)
     }
 }

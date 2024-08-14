@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace chess.console
 {
-    internal class Pawn
+    public class Pawn
     {
+        //Legal Move
+
+        //Upgrade
+
+        //At Start Position
     }
 }
