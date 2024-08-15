@@ -33,7 +33,7 @@ namespace chess.console
             
         }
 
-        private int PlaySpaceToBoardSpaceWidth(int playWidth)
+        private int PlaySpaceToBoardSpaceWidth(int playWidth) // enter play space (position A-H where A is 1 and H is 8) and get the board space position of printout
         {
             Dictionary<int, int> width = new Dictionary<int, int>
             {
@@ -49,7 +49,7 @@ namespace chess.console
             
             return width[playWidth];
         }
-        private int PlaySpaceToBoardSpaceHeight(int playHeight)
+        private int PlaySpaceToBoardSpaceHeight(int playHeight)  //enter play space (position 1-8) and get the board space position of printout
         {
             Dictionary<int, int> height = new Dictionary<int, int>
             {
@@ -68,7 +68,7 @@ namespace chess.console
         //print board state
         public void PrintBoard()
         {
-            Dictionary<int, string> letters = new Dictionary<int, string>
+            Dictionary<int, string> letters = new Dictionary<int, string> // helps printing letters
             {
                 {3, "A"},
                 {7, "B"},
