@@ -22,3 +22,8 @@ Console.WriteLine("" +
     " +---+---+---+---+---+---+---+---+\r\n" +
     "   a   b   c   d   e   f   g   h"
 );
+
+
+
+//letters on index 3, 7, 11, 15
+// mod: y+1 % 4 == 0, then letter
