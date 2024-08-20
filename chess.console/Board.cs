@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static chess.console.Piece;
 
 namespace chess.console
 {
@@ -21,6 +24,79 @@ namespace chess.console
                 this.occupied = occupied;
             }
         };
+
+        public Board()
+        {
+            //Create and add and pieces to list
+            for(int i = 1; i < 9; i++)
+            {
+               
+                //math for position
+                
+                Piece.Position pos = new Piece.Position();
+                pos.x = i;
+                pos.y = 2;
+
+                //white
+                Pawn pawn = new Pawn(false, pos);
+                pieces.Add(pawn);
+
+                //black
+                pos.y = 7;
+                Pawn pawn2 = new Pawn(false, pos);
+                pieces.Add(pawn2);
+            }
+
+            for(int i = 1; i < 9; i++)
+            {
+                Piece.Position pos = new Piece.Position();
+                pos.x = i;
+                pos.y = 1;
+                if (i == 1 || i == 8) //rooks
+                {
+                    Rook piece = new Rook(true, pos);
+                    pieces.Add(piece);
+                    pos.y = 8;
+                    Rook piece2 = new Rook(false, pos);
+                    pieces.Add(piece2);
+                }
+                else if(i == 2 || i == 7) //knights
+                {
+                    Knight piece = new Knight(true, pos);
+                    pieces.Add(piece);
+                    pos.y = 8;
+                    Knight piece2 = new Knight(false, pos);
+                    pieces.Add(piece2);
+                }
+                else if(i == 3 || i == 6) //bishops
+                {
+                    Bishop piece = new Bishop(true, pos);
+                    pieces.Add(piece);
+                    pos.y = 8;
+                    Bishop piece2 = new Bishop(false, pos);
+                    pieces.Add(piece2);
+                }
+                else if(i == 4) // KING
+                {
+                    King piece = new King(true, pos);
+                    pieces.Add(piece);
+                    pos.y = 8;
+                    King piece2 = new King(false, pos);
+                    pieces.Add(piece2);
+                }
+                else // QUEEN
+                {
+                    Queen piece = new Queen(true, pos);
+                    pieces.Add(piece);
+                    pos.y = 8;
+                    Queen piece2 = new Queen(false, pos);
+                    pieces.Add(piece2);
+                }
+            }
+
+        }
+
+        
         //List of board positions
         private List<BoardSquares> board = new List<BoardSquares>();
 
@@ -32,6 +108,48 @@ namespace chess.console
         {
             
         }
+        public string RepresentPieceOnBoard(int x, int y)
+        {
+            string textPiece = "";
+            foreach (var piece in pieces)
+            {
+                if (piece.pos.x == x && piece.pos.y == y)
+                {
+                    if (piece.type == 0) // PAWN
+                    {
+                        textPiece = "P";
+                    }
+                    else if (piece.type == 1) // ROOK
+                    {
+                        textPiece = "R";
+                    }
+                    else if (piece.type == 2) // KNIGHT
+                    {
+                        textPiece = "N";
+                    }
+                    else if (piece.type == 3) // BISHOP
+                    {
+                        textPiece = "B";
+                    }
+                    else if (piece.type == 4) // QUEEN
+                    {
+                        textPiece = "Q";
+                    }
+                    else if (piece.type == 5) // KING
+                    {
+                        textPiece = "K";
+                    }
+                    if (piece.isBlack == true)
+                    {
+                        textPiece.ToLower(); //todo. this doesnt trigger
+                    }
+                    return textPiece;
+                }
+            }
+            return " ";
+        }
+
+
 
         private int PlaySpaceToBoardSpaceWidth(int playWidth) // enter play space (position A-H where A is 1 and H is 8) and get the board space position of printout
         {
@@ -63,6 +181,38 @@ namespace chess.console
                 {8, 1}
             };
             return height[playHeight];  
+        }
+
+        private int BoardSpaceToPlaySpaceWidth(int playWidth) // enter play space (position A-H where A is 1 and H is 8) and get the board space position of printout
+        {
+            Dictionary<int, int> width = new Dictionary<int, int>
+            {
+                {3, 1},
+                {7, 2},
+                {11, 3},
+                {15, 4},
+                {19, 5},
+                {23, 6},
+                {27, 7},
+                {31, 8}
+            };
+
+            return width[playWidth];
+        }
+        private int BoardSpaceToPlaySpaceHeight(int playHeight)  //enter play space (position 1-8) and get the board space position of printout
+        {
+            Dictionary<int, int> height = new Dictionary<int, int>
+            {
+                {16, 1},
+                {14, 2},
+                {12, 3},
+                {10, 4},
+                {8, 5},
+                {6, 6},
+                {4, 7},
+                {2, 8}
+            };
+            return height[playHeight];
         }
 
         //print board state
@@ -108,6 +258,11 @@ namespace chess.console
                         else if((x + 3) % 4 == 0)//every 1 5 9.... column
                         {
                             line += "|";
+                        }
+                        else if((x+1) % 4 == 0 && y > 1 && y < 16)   // Position for pieces
+                        {
+                            //line += "T";
+                            line += RepresentPieceOnBoard(BoardSpaceToPlaySpaceWidth(x), BoardSpaceToPlaySpaceHeight(y));
                         }
                         else //if nothing else, we print empty space
                         {

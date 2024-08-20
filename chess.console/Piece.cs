@@ -33,16 +33,16 @@ namespace chess.console
         };
 
         //Identifier
-        protected int type { get; set; }
+        public int type { get; set; }
 
         //First move
         protected bool firstMove = true;
 
         //Color (Black/White)
-        protected bool isBlack { get; set; }
+        public bool isBlack { get; set; }
 
         //Position (2D)
-        protected Position pos { get; set; }
+        public Position pos { get; set; }
 
         //State (Dead/Alive)
         public bool isAlive { get; set; }

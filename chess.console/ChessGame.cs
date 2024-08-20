@@ -1,12 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using chess.console;
 
-Console.WriteLine("Hello, World!");
 
 //Console.WriteLine("" +
 //    "   a   b   c   d   e   f   g   h\r\n" +
 //    " +---+---+---+---+---+---+---+---+\r\n" +
-//    "8| r | n | b | q | k | b | n | r |8\r\n" +
+//    "8| r | n | b | k | q | b | n | r |8\r\n" +
 //    " +---+---+---+---+---+---+---+---+\r\n" +
 //    "7| p | p | p | p | p | p | p | p |7\r\n" +
 //    " +---+---+---+---+---+---+---+---+\r\n" +
@@ -20,11 +19,10 @@ Console.WriteLine("Hello, World!");
 //    " +---+---+---+---+---+---+---+---+\r\n" +
 //    "2| P | P | P | P | P | P | P | P |2\r\n" +
 //    " +---+---+---+---+---+---+---+---+\r\n" +
-//    "1| R | N | B | Q | K | B | N | R |1\r\n" +
+//    "1| R | N | B | K | Q | B | N | R |1\r\n" +
 //    " +---+---+---+---+---+---+---+---+\r\n" +
 //    "   a   b   c   d   e   f   g   h"
 //);
-
 
 Board board = new Board();
 board.PrintBoard();
