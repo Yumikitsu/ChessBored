@@ -30,3 +30,11 @@ Board board = new Board();
 board.PrintBoard();
 //letters on index 3, 7, 11, 15
 // mod: y+1 % 4 == 0, then letter
+
+StateManager stateManager = new StateManager();
+
+//Main gameplay loop
+while(stateManager.GameOngoing())
+{
+    stateManager.Update(board);
+}

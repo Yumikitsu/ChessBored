@@ -130,6 +130,13 @@ namespace chess.console
 
         }
 
+        public bool IsThisMyPiece(bool currentTurn, int[] comparePos)
+        {
+            //Check if there is a piece on comparePos that belongs to the current player
+
+            return false;
+        }
+
         //CheckIfCheckmate
 
         //bool currentTurn (false = black / true = white)
