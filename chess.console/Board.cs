@@ -285,11 +285,5 @@ namespace chess.console
             index = this.IsThisMyPiece(currentTurn, startPos);
             pieces.ElementAt(index).Move(endPos[0], endPos[1]);
         }
-
-        //CheckIfCheckmate
-
-        //bool currentTurn (false = black / true = white)
-
-        //Check collision
     }
 }
