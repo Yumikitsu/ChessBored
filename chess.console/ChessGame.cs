@@ -25,7 +25,7 @@ using chess.console;
 //);
 
 Board board = new Board();
-board.PrintBoard();
+
 //letters on index 3, 7, 11, 15
 // mod: y+1 % 4 == 0, then letter
 
@@ -35,4 +35,5 @@ StateManager stateManager = new StateManager();
 while(stateManager.GameOngoing())
 {
     stateManager.Update(board);
+    board.PrintBoard();
 }
