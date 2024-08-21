@@ -39,12 +39,12 @@ namespace chess.console
             return new int[] { x, y };
         }
         bool gameOn { get; set; } //Variable to check if the game is ongoing or should stop
-        bool currentTurn { get; set; } //Who's turn is it to play? True = White, False = Black
+        bool currentTurn { get; set; } //Who's turn is it to play? True = Black, False = White
 
         public StateManager()
         {
             gameOn = true;
-            currentTurn = true;
+            currentTurn = false;
         }
 
         //Get a value if the game is ongoing
@@ -85,15 +85,18 @@ namespace chess.console
                         }
                     }
 
-                    if(reset) //Look for a new input again
+                    if(reset || startPos == endPos) //Look for a new input again
                     {
+                        reset = true;
                         continue;
                     }
 
-                    //Check if the first part of the inputs equate to your own piece
-                    if (board.IsThisMyPiece(currentTurn, startPos))
+                    //Check if the piece can move to the new position without being blocked
+                    if (board.CanMovePiece(currentTurn, startPos, endPos))
                     {
-
+                        //Move piece and kill enemy if they are on the endPos
+                        board.MovePiece(currentTurn, startPos, endPos);
+                        break;
                     }
 
                 }
@@ -102,17 +105,8 @@ namespace chess.console
                     reset = true;
                 }
             }
+
+            //Check for checkmate before ending turn
         }
-
-        //KillPiece
-
-        //Input handling
-        //First parameter: Pick up piece if it exists there
-        //Second parameter: Check if legal space
-        //Can piece move there (piece function)?
-        //Check for blocks along the way (board)
-        //Eliminate Piece or not (Cannot eliminate king)?
-        //Check for checkmate
-
     }
 }

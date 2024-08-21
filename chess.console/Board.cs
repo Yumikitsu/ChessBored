@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static chess.console.Piece;
@@ -285,17 +286,175 @@ namespace chess.console
 
         }
 
-        public bool IsThisMyPiece(bool currentTurn, int[] comparePos)
+        private int IsThisMyPiece(bool currentTurn, int[] comparePos)
         {
+            int index = 0;
             //Check if there is a piece on comparePos that belongs to the current player
+            foreach (Piece piece in this.pieces)
+            {
+                if (piece.isBlack == currentTurn) //Correct player
+                {
+                    if (piece.pos.x == comparePos[0] && piece.pos.y == comparePos[1]) //Same position
+                    {
+                        return index;
+                    }
+                }
+                index++;
+            }
+            return -1;
+        }
 
+        private bool IsThereAPieceHere(int x, int y)
+        {
+            //Check if a piece is on this position
+            foreach (Piece piece in this.pieces)
+            {
+                if (piece.pos.x == x && piece.pos.y == y) //Same position
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
-        //CheckIfCheckmate
+        public bool CanMovePiece(bool currentTurn, int[] startPos, int[] endPos)
+        {
+            //Check if the first part of the inputs equate to your own piece
+            int firstIndex = this.IsThisMyPiece(currentTurn, startPos);
+            int enemyKingCheckIndex = this.IsThisMyPiece(!currentTurn, endPos);
+            if (enemyKingCheckIndex != -1)
+            {
+                if (pieces.ElementAt(enemyKingCheckIndex).type == (int)Piece.Types.KING)
+                {
+                    return false;
+                }
+            }
 
-        //bool currentTurn (false = black / true = white)
 
-        //Check collision
+            if(firstIndex != -1)
+            {
+                if(pieces.ElementAt(firstIndex).MoveLogic(endPos[0], endPos[1])) //If the piece can move to the end position
+                {
+                    //Check if it is a knight
+                    if(pieces.ElementAt(firstIndex).type == (int)Piece.Types.KNIGHT)
+                    {
+                        //Is the end position not occupied by your own piece
+                        if(this.IsThisMyPiece(currentTurn, endPos) == -1)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        //Check if the path is blocked
+                        if (Math.Abs(startPos[0] - endPos[0]) != 0 || Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
+                        {
+                            if (startPos[0] < endPos[0]) //Moving right
+                            {
+                                for (int i = startPos[0]; i < endPos[0]; i++)
+                                {
+                                    if (IsThereAPieceHere(i, startPos[1]))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else //Moving left
+                            {
+                                for(int i = startPos[0]; i > endPos[0]; i--)
+                                {
+                                    if (IsThereAPieceHere(i, startPos[1]))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        else if (Math.Abs(startPos[0] - endPos[0]) == 0 || Math.Abs(startPos[1] - endPos[1]) != 0) //vertical movement
+                        {
+                            if (startPos[1] < endPos[1]) //Moving up
+                            {
+                                for (int i = startPos[1]; i < endPos[1]; i++)
+                                {
+                                    if (IsThereAPieceHere(startPos[0], i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else //Moving down
+                            {
+                                for (int i = startPos[1]; i > endPos[1]; i--)
+                                {
+                                    if (IsThereAPieceHere(startPos[0], i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        else //diagonal movement
+                        {
+                            if (startPos[0] < endPos[0] && startPos[1] < endPos[1]) //Moving up right
+                            {
+                                for(int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++)
+                                {
+                                    if (IsThereAPieceHere(startPos[0] + i, startPos[1] + i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else if(startPos[0] > endPos[0] && startPos[1] > endPos[1]) //Moving down left
+                            {
+                                for (int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++)
+                                {
+                                    if (IsThereAPieceHere(startPos[0] - i, startPos[1] - i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else if (startPos[0] < endPos[0] && startPos[1] > endPos[1]) //Moving down right
+                            {
+                                for (int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++)
+                                {
+                                    if (IsThereAPieceHere(startPos[0] + i, startPos[1] - i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else //Moving up left
+                            {
+                                for (int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++)
+                                {
+                                    if (IsThereAPieceHere(startPos[0] - i, startPos[1] + i))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void MovePiece(bool currentTurn, int[] startPos, int[] endPos)
+        {
+            //If there is an enemy on the endPos. Kill it
+            int index = this.IsThisMyPiece(!currentTurn, endPos);
+            if(index != -1)
+            {
+                pieces.RemoveAt(index); //Rest in piece
+            }
+
+            //Move the piece to the new position
+            index = this.IsThisMyPiece(currentTurn, startPos);
+            pieces.ElementAt(index).Move(endPos[0], endPos[1]);
+        }
     }
 }
