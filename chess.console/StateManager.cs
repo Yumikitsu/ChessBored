@@ -105,8 +105,17 @@ namespace chess.console
                     reset = true;
                 }
             }
-
             //Check for checkmate before ending turn
+
+            //Change turn
+            if(currentTurn)
+            {
+                currentTurn = false;
+            }
+            else
+            {
+                currentTurn = true;
+            }
         }
     }
 }

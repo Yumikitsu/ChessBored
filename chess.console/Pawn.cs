@@ -30,7 +30,7 @@ namespace chess.console
                 if (Math.Abs(pos.x - x) == 0 && Math.Abs(pos.y - y) > 0)
                 {
                     //Check if it is moving the right direction (If positive and white = move up, If negative and black = move down)
-                    if ((pos.y - y > 0 && !isBlack) || (pos.y - y < 0 && isBlack))
+                    if ((pos.y - y < 0 && !isBlack) || (pos.y - y > 0 && isBlack))
                     {
                         //Check if it is the firstMove or not
                         if (firstMove)

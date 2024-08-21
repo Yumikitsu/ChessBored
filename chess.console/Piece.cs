@@ -62,7 +62,11 @@ namespace chess.console
         //Move piece to new position
         public void Move(int x, int y)
         {
-            pos.setNewPos(x, y);
+            //this.pos = pos.setNewPos(x, y);
+            Position newPos = new Position();
+            newPos.x = x; newPos.y = y;
+            pos = newPos;
+
             if(firstMove)
             {
                 firstMove = false;

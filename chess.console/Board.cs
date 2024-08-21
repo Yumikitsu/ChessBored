@@ -231,7 +231,7 @@ namespace chess.console
                 {31, "H"}
             };
 
-
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             // x and y are coordinates where x is which column and y is which row. The top left corner of the chess board 
             // will be known as (0, 0). 
             for(int y = 0; y < 19; y++) // for each row
@@ -347,11 +347,11 @@ namespace chess.console
                     else
                     {
                         //Check if the path is blocked
-                        if (Math.Abs(startPos[0] - endPos[0]) != 0 || Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
+                        if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
                         {
                             if (startPos[0] < endPos[0]) //Moving right
                             {
-                                for (int i = startPos[0]; i < endPos[0]; i++)
+                                for (int i = startPos[0] + 1; i < endPos[0]; i++)
                                 {
                                     if (IsThereAPieceHere(i, startPos[1]))
                                     {
@@ -361,7 +361,7 @@ namespace chess.console
                             }
                             else //Moving left
                             {
-                                for(int i = startPos[0]; i > endPos[0]; i--)
+                                for(int i = startPos[0] - 1; i > endPos[0]; i--)
                                 {
                                     if (IsThereAPieceHere(i, startPos[1]))
                                     {
@@ -370,11 +370,11 @@ namespace chess.console
                                 }
                             }
                         }
-                        else if (Math.Abs(startPos[0] - endPos[0]) == 0 || Math.Abs(startPos[1] - endPos[1]) != 0) //vertical movement
+                        else if (Math.Abs(startPos[0] - endPos[0]) == 0 && Math.Abs(startPos[1] - endPos[1]) != 0) //vertical movement
                         {
                             if (startPos[1] < endPos[1]) //Moving up
                             {
-                                for (int i = startPos[1]; i < endPos[1]; i++)
+                                for (int i = startPos[1] + 1; i < endPos[1]; i++)
                                 {
                                     if (IsThereAPieceHere(startPos[0], i))
                                     {
@@ -384,7 +384,7 @@ namespace chess.console
                             }
                             else //Moving down
                             {
-                                for (int i = startPos[1]; i > endPos[1]; i--)
+                                for (int i = startPos[1] - 1; i > endPos[1]; i--)
                                 {
                                     if (IsThereAPieceHere(startPos[0], i))
                                     {
@@ -435,8 +435,8 @@ namespace chess.console
                                     }
                                 }
                             }
-                            return true;
                         }
+                        return true;
                     }
                 }
             }
