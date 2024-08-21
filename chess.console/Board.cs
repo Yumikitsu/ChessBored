@@ -7,11 +7,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static chess.console.Piece;
+using chess.console.ConsoleOrSpeech;
+using chess.console.Speech;
 
 namespace chess.console
 {
     public class Board
     {
+
+
         struct BoardSquares
         {
             int x = 0;
@@ -26,10 +30,28 @@ namespace chess.console
             }
         };
 
+        public Communicate communicate = new Communicate();
+        public ConsoleCommunicator consoleCommunicator = new ConsoleCommunicator();
+        public SpeechCommunicator speechCommunicator = new SpeechCommunicator();
+
+        public Dictionary<int, string> letters = new Dictionary<int, string> // helps printing letters
+        {
+            {3, "A"},
+            {7, "B"},
+            {11, "C"},
+            {15, "D"},
+            {19, "E"},
+            {23, "F"},
+            {27, "G"},
+            {31, "H"}
+        };
+
         public Board()
         {
+            
+
             //Create and add and pieces to list
-            for(int i = 1; i < 9; i++)
+            for (int i = 1; i < 9; i++)
             {
                
                 //math for position
@@ -219,22 +241,11 @@ namespace chess.console
         //print board state
         public void PrintBoard()
         {
-            Dictionary<int, string> letters = new Dictionary<int, string> // helps printing letters
-            {
-                {3, "A"},
-                {7, "B"},
-                {11, "C"},
-                {15, "D"},
-                {19, "E"},
-                {23, "F"},
-                {27, "G"},
-                {31, "H"}
-            };
 
-            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            communicate.SendMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", consoleCommunicator);
             // x and y are coordinates where x is which column and y is which row. The top left corner of the chess board 
             // will be known as (0, 0). 
-            for(int y = 0; y < 19; y++) // for each row
+            for (int y = 0; y < 19; y++) // for each row
             {
                 string line = "";
                 for (int x = 0; x < 35; x++) // "column" in said row
@@ -281,7 +292,7 @@ namespace chess.console
                     }
 
                 }
-                Console.WriteLine(line);
+                communicate.SendMessage(line, consoleCommunicator);
             }
 
         }
@@ -443,17 +454,59 @@ namespace chess.console
             return false;
         }
 
+        public string BoolColorToStringColor(bool black)
+        {
+            if (black)
+            {
+                return "black";
+            }
+            return "white";
+        }
+
+        public string SpeechPreparer(int[] startPos, int[] endPos, string piece, bool color, string kill)
+        {
+            if(kill != "") // a piece was eliminated
+            {
+                return $"Moving {BoolColorToStringColor(color)} {piece} from {letters[PlaySpaceToBoardSpaceWidth(startPos[0])]} {startPos[1]} to {letters[PlaySpaceToBoardSpaceWidth(endPos[0])]} {endPos[1]}" +
+                    $" eliminating {BoolColorToStringColor(!color)} {kill}";
+            }
+            return $"Moving {BoolColorToStringColor(color)} {piece} from {letters[PlaySpaceToBoardSpaceWidth(startPos[0])]} {startPos[1]} to {letters[PlaySpaceToBoardSpaceWidth(endPos[0])]} {endPos[1]}";
+        }
+
+        public string GetPieceName(int piece)
+        {
+            switch(piece)
+            {
+                case 0:
+                    return "pawn";
+                case 1:
+                    return "rook";
+                case 2:
+                    return "knight";
+                case 3:
+                    return "bishop";
+                case 4:
+                    return "queen";
+                case 5:
+                    return "king";
+            }
+            return ""; //intellinonsense
+        }
+
         public void MovePiece(bool currentTurn, int[] startPos, int[] endPos)
         {
             //If there is an enemy on the endPos. Kill it
             int index = this.IsThisMyPiece(!currentTurn, endPos);
+            string kill = "";
             if(index != -1)
             {
+                kill = GetPieceName(pieces[index].type);
                 pieces.RemoveAt(index); //Rest in piece
             }
 
             //Move the piece to the new position
             index = this.IsThisMyPiece(currentTurn, startPos);
+            communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
             pieces.ElementAt(index).Move(endPos[0], endPos[1]);
         }
     }

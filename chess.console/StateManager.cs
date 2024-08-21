@@ -53,6 +53,8 @@ namespace chess.console
             return gameOn;
         }
 
+       
+
         //Update the game
         public void Update(Board board)
         {
