@@ -357,6 +357,19 @@ namespace chess.console
                     }
                     else
                     {
+                        if(pieces.ElementAt(firstIndex).type == (int)Piece.Types.PAWN) //if piece is a pawn
+                        {
+                            //if it moves diagonally
+                            if(Math.Abs(pieces.ElementAt(firstIndex).pos.x - endPos[0]) == 1 && Math.Abs(pieces.ElementAt(firstIndex).pos.y - endPos[1]) == 1)
+                            {
+                                int index = this.IsThisMyPiece(!currentTurn, endPos);
+                                if (index == -1)
+                                {
+                                    // cannot kill
+                                    return false;
+                                }
+                            }
+                        }
                         //Check if the path is blocked
                         if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
                         {
@@ -401,6 +414,16 @@ namespace chess.console
                                     {
                                         return false;
                                     }
+                                }
+                            }
+                            //For pawns
+                            if (pieces.ElementAt(firstIndex).type == (int)Piece.Types.PAWN)
+                            {
+                                if (IsThereAPieceHere(endPos[0], endPos[1]))
+                                {
+                                    //cannot move forward into another piece
+                                    // fithy pawn peseant 
+                                    return false;
                                 }
                             }
                         }

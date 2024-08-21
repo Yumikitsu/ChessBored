@@ -51,7 +51,16 @@ namespace chess.console
                         }
                     }
                 }
+                else if(Math.Abs(pos.x - x) == 1 && Math.Abs(pos.y - y) == 1)//check if pawns is trying a kill move
+                {
+                    //Check if it is moving the right direction (If positive and white = move up, If negative and black = move down)
+                    if ((pos.y - y < 0 && !isBlack) || (pos.y - y > 0 && isBlack))
+                    {
+                        return true;
+                    }
+                }
             }
+            
             return false;
         }
     }

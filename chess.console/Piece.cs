@@ -14,7 +14,7 @@ namespace chess.console
             public int x { get; set; }
             public int y { get; set; }
 
-            public void setNewPos(int x, int y)
+            public void SetNewPos(int x, int y)
             {
                 this.x = x;
                 this.y = y;
