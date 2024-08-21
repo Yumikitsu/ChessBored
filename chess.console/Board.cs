@@ -43,7 +43,7 @@ namespace chess.console
 
                 //black
                 pos.y = 7;
-                Pawn pawn2 = new Pawn(false, pos);
+                Pawn pawn2 = new Pawn(true, pos);
                 pieces.Add(pawn2);
             }
 
@@ -51,12 +51,12 @@ namespace chess.console
             {
                 Piece.Position pos = new Piece.Position();
                 pos.x = i;
-                pos.y = 1;
+                pos.y = 8; // white first 
                 if (i == 1 || i == 8) //rooks
                 {
                     Rook piece = new Rook(true, pos);
                     pieces.Add(piece);
-                    pos.y = 8;
+                    pos.y = 1;
                     Rook piece2 = new Rook(false, pos);
                     pieces.Add(piece2);
                 }
@@ -64,7 +64,7 @@ namespace chess.console
                 {
                     Knight piece = new Knight(true, pos);
                     pieces.Add(piece);
-                    pos.y = 8;
+                    pos.y = 1;
                     Knight piece2 = new Knight(false, pos);
                     pieces.Add(piece2);
                 }
@@ -72,7 +72,7 @@ namespace chess.console
                 {
                     Bishop piece = new Bishop(true, pos);
                     pieces.Add(piece);
-                    pos.y = 8;
+                    pos.y = 1;
                     Bishop piece2 = new Bishop(false, pos);
                     pieces.Add(piece2);
                 }
@@ -80,7 +80,7 @@ namespace chess.console
                 {
                     King piece = new King(true, pos);
                     pieces.Add(piece);
-                    pos.y = 8;
+                    pos.y = 1;
                     King piece2 = new King(false, pos);
                     pieces.Add(piece2);
                 }
@@ -88,7 +88,7 @@ namespace chess.console
                 {
                     Queen piece = new Queen(true, pos);
                     pieces.Add(piece);
-                    pos.y = 8;
+                    pos.y = 1;
                     Queen piece2 = new Queen(false, pos);
                     pieces.Add(piece2);
                 }
@@ -139,9 +139,9 @@ namespace chess.console
                     {
                         textPiece = "K";
                     }
-                    if (piece.isBlack == true)
+                    if (piece.isBlack)
                     {
-                        textPiece.ToLower(); //todo. this doesnt trigger
+                        textPiece = textPiece.ToLower(); //todo. this doesnt trigger
                     }
                     return textPiece;
                 }
@@ -259,7 +259,7 @@ namespace chess.console
                         {
                             line += "|";
                         }
-                        else if((x+1) % 4 == 0 && y > 1 && y < 16)   // Position for pieces
+                        else if((x+1) % 4 == 0 && y > 1 && y < 17)   // Position for pieces
                         {
                             //line += "T";
                             line += RepresentPieceOnBoard(BoardSpaceToPlaySpaceWidth(x), BoardSpaceToPlaySpaceHeight(y));
