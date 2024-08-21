@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static chess.console.Piece;
 using chess.console.ConsoleOrSpeech;
 using chess.console.Speech;
+using System.Runtime.ExceptionServices;
 
 namespace chess.console
 {
@@ -327,6 +328,29 @@ namespace chess.console
             }
             return false;
         }
+        private bool IsPieceThreat(int x, int y, bool kingIsBlack, Types[] threats)
+        {
+            //Check if a piece is on this position
+            foreach (Piece piece in this.pieces)
+            {
+                if (piece.pos.x == x && piece.pos.y == y) //Same position
+                {
+                    if(piece.isBlack != kingIsBlack)// different color from king
+                    {
+                        foreach (var threat in threats)
+                        {
+                            if((int)threat == piece.type)
+                            {
+                                // this is dangerous, threat!
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
 
         public bool CanMovePiece(bool currentTurn, int[] startPos, int[] endPos)
         {
@@ -370,6 +394,16 @@ namespace chess.console
                                 }
                             }
                         }
+                       if(pieces.ElementAt(firstIndex).type == (int)Piece.Types.KING)
+                       {
+                            //so king does not put himnself in check
+                            if(CheckCheck(endPos, pieces.ElementAt(firstIndex).isBlack))
+                            {
+                                //puts himself in check, not allowed
+                                return false;
+                            }
+                       }
+
                         //Check if the path is blocked
                         if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
                         {
@@ -476,6 +510,32 @@ namespace chess.console
             }
             return false;
         }
+
+       
+
+        //returns false if everything is fine, returns true for check 
+        public bool CheckCheck(int[] kingPosition, bool isBlackKing)
+        {
+            foreach (var piece in pieces)
+            {
+                if(piece.isBlack != isBlackKing)//enemy piece
+                {
+                    int[] ints = new int[2];
+                    ints[0] = piece.pos.x;
+                    ints[1] = piece.pos.y;
+
+                    if (CanMovePiece(piece.isBlack, ints, kingPosition))
+                    {
+                        //piece can move here, aka check
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
 
         public string BoolColorToStringColor(bool black)
         {
