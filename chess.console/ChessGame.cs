@@ -34,6 +34,7 @@ StateManager stateManager = new StateManager();
 //Main gameplay loop
 while(stateManager.GameOngoing())
 {
-    stateManager.Update(board);
     board.PrintBoard();
+    stateManager.Update(board);
+    
 }
