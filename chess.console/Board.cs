@@ -132,6 +132,8 @@ namespace chess.console
             return JsonConvert.DeserializeObject<Board>(serializedObject);
         }
 
+      
+
 
 
         //List of board positions
@@ -407,28 +409,30 @@ namespace chess.console
                                 }
                             }
                         }
-                        //if (normalMove)
-                        //{
+                        if (normalMove)
+                        {
+                            Board tempBoard = DeepCopy();
+                            int secondIndex = this.IsThisMyPiece(currentTurn, startPos);
+                            tempBoard.TempMovePiece(currentTurn, startPos, endPos);
 
+                            foreach (var isKing in tempBoard.pieces)
+                            {
+                                if (isKing.type == (int)Piece.Types.KING && isKing.isBlack == tempBoard.pieces.ElementAt(secondIndex).isBlack)
+                                {
+                                    int[] position = new int[2];
+                                    position[0] = isKing.pos.x;
+                                    position[1] = isKing.pos.y;
 
-                        //    foreach (var isKing in pieces)
-                        //    {
-                        //        if (isKing.type == (int)Piece.Types.KING && isKing.isBlack == pieces.ElementAt(firstIndex).isBlack)
-                        //        {
-                        //            int[] position = new int[2];
-                        //            position[0] = isKing.pos.x;
-                        //            position[1] = isKing.pos.y;
+                                    // to check so a player does not put himself in check
+                                    if (CheckCheck(position, tempBoard.pieces.ElementAt(secondIndex).isBlack))
+                                    {
+                                        //puts himself in check, not allowed
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
 
-                        //            // to check so a player does not put himself in check
-                        //            if (CheckCheck(position, pieces.ElementAt(firstIndex).isBlack))
-                        //            {
-                        //                //puts himself in check, not allowed
-                        //                return false;
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        
                         //Check if the path is blocked
                         if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
                         {
@@ -708,6 +712,7 @@ namespace chess.console
                         {
                             //Board tempBoard = new Board(pieces);
                             Board tempBoard = this.DeepCopy();
+                            
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))

@@ -56,6 +56,9 @@ namespace chess.console
             this.isAlive = true;
         }
 
+      
+    
+
         //Override MoveLogic function
         public abstract bool MoveLogic(int x, int y);
 
