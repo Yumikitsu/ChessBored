@@ -1,4 +1,6 @@
-﻿using System;
+﻿using chess.console.ConsoleOrSpeech;
+using chess.console.Speech;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -103,16 +105,34 @@ namespace chess.console
                         board.MovePiece(currentTurn, startPos, endPos);
 
                         //true == black
-                        if(currentTurn)
+                        if (currentTurn)
                         {
                             //check if white is now in check
-                            whiteCheck = board.StateCheck(currentTurn);
+                            if (whiteCheck = board.StateCheck(currentTurn))
+                            {
+                                board.communicate.SendMessage("Check!", board.speechCommunicator);
+                                board.communicate.SendMessage("Check!", board.consoleCommunicator);
+                                if (!board.CheckMate(currentTurn))
+                                {
+                                    board.communicate.SendMessage("Checkmate! Black player wins!", board.speechCommunicator);
+                                    board.communicate.SendMessage("Checkmate! Black player wins!", board.consoleCommunicator);
+
+                                }
+                            }
                         }
                         else
                         {
-                            blackCheck = board.StateCheck(currentTurn);
+                            if (blackCheck = board.StateCheck(currentTurn))
+                            {
+                                board.communicate.SendMessage("Check!", board.speechCommunicator);
+                                board.communicate.SendMessage("Check!", board.consoleCommunicator);
+                                if (!board.CheckMate(currentTurn))
+                                {
+                                    board.communicate.SendMessage("Checkmate! White player wins!", board.speechCommunicator);
+                                    board.communicate.SendMessage("Checkmate! White player wins!", board.consoleCommunicator);
+                                }
+                            }
                         }
-
                         break;
                     }
 

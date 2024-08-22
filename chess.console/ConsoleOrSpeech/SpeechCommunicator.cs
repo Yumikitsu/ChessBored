@@ -10,12 +10,15 @@ namespace chess.console.ConsoleOrSpeech
 {
     public class SpeechCommunicator : ICommunicator
     {
+        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
         public void SendMessage(string message)
         {
-            SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+            
 
             //synthesizer.Speak(message);
+            synthesizer.SpeakAsyncCancelAll();
             synthesizer.SpeakAsync(message);
         }
+        
     }
 }
