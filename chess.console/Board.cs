@@ -468,7 +468,7 @@ namespace chess.console
                                 if (IsThereAPieceHere(endPos[0], endPos[1]))
                                 {
                                     //cannot move forward into another piece
-                                    // fithy pawn peseant 
+                                    //filthy pawn peseant 
                                     return false;
                                 }
                             }
@@ -606,7 +606,7 @@ namespace chess.console
             return ""; //intellinonsense
         }
 
-        public void MovePiece(bool currentTurn, int[] startPos, int[] endPos)
+        public void MovePiece(bool currentTurn, int[] startPos, int[] endPos, int castling = 0)
         {
             //If there is an enemy on the endPos. Kill it
             int index = this.IsThisMyPiece(!currentTurn, endPos);
@@ -620,10 +620,115 @@ namespace chess.console
             //Move the piece to the new position
             index = this.IsThisMyPiece(currentTurn, startPos);
             pieces.ElementAt(index).Move(endPos[0], endPos[1]);
-           
-            communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
-            
+            if(castling == 0)
+            {
+                communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
+            }
+            else if(castling == 1) //Castled Queenside
+            {
+                if(currentTurn)
+                {
+                    communicate.SendMessage("Black player castled queenside", speechCommunicator);
+                }
+                else
+                {
+                    communicate.SendMessage("White player castled queenside", speechCommunicator);
+                }
+            }
+            else if(castling == 2) //Castled Kingside
+            {
+                if (currentTurn)
+                {
+                    communicate.SendMessage("Black player castled kingside", speechCommunicator);
+                }
+                else
+                {
+                    communicate.SendMessage("White player castled kingside", speechCommunicator);
+                }
+            }
         }
+
+        public bool Castling(bool currentTurn, int[] startPos, int[] endPos)
+        {
+            bool found = false;
+            foreach (var king in pieces.Where(x => x.type == (int)Types.KING)) //All kings
+            {
+                if (king.isBlack == currentTurn && king.pos.x == startPos[0] && king.pos.y == startPos[1] && king.firstMove && !CheckCheck(startPos, king.isBlack)) //Condition for king to be able to castle
+                {
+                    foreach (var rook in pieces.Where(x => x.type == (int)Types.ROOK)) //All rooks
+                    {
+                        if (rook.isBlack == currentTurn && rook.pos.x == endPos[0] && rook.pos.y == endPos[1] && rook.firstMove) //Condition for rook to be able to castle
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if(found) //Found castleable at start and endPos
+            {
+                bool movingLeft = false;
+                if (startPos[0] > endPos[0]) //King moving left
+                {
+                    movingLeft = true;
+                    for(int i = startPos[0] - 1; i > endPos[0]; i--) //Check for all middle positions if they are blocked
+                    {
+                        if(IsThereAPieceHere(i, startPos[1])) //Block check
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else //King moving right
+                {
+                    for (int i = startPos[0] + 1; i < endPos[0]; i++) //Check for all middle positions if they are blocked
+                    {
+                        if (IsThereAPieceHere(i, startPos[1])) //Block check
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+
+                if(movingLeft) //King moving left
+                {
+                    //New king and rook positions
+                    int[] kingEndPos = new int[2] { startPos[0] - 2, startPos[1] };
+                    int[] rookEndPos = new int[2] { startPos[0] - 1, startPos[1] };
+
+                    //Check if these positions result in king being in check
+                    if(!CheckCheck(kingEndPos, currentTurn) && !CheckCheck(rookEndPos, currentTurn))
+                    {
+                        //Move king and rook to new position
+                        MovePiece(currentTurn, startPos, kingEndPos, 2);
+                        MovePiece(currentTurn, endPos, rookEndPos, 3);
+                        return true;
+                    }
+                }
+                else //King moving right
+                {
+                    //New king and rook positions
+                    int[] kingEndPos = new int[2] { startPos[0] + 2, startPos[1] };
+                    int[] rookEndPos = new int[2] { startPos[0] + 1, startPos[1] };
+
+                    //Check if these positions result in king being in check
+                    if (!CheckCheck(kingEndPos, currentTurn) && !CheckCheck(rookEndPos, currentTurn))
+                    {
+                        //Move king and rook to new position
+                        MovePiece(currentTurn, startPos, kingEndPos, 1);
+                        MovePiece(currentTurn, endPos, rookEndPos, 3);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+}
+           
 
 
         private void TempMovePiece(bool isBlack, int[] startPos, int[] endPos)

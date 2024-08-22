@@ -135,7 +135,25 @@ namespace chess.console
                         }
                         break;
                     }
+                    else if (board.Castling(currentTurn, startPos, endPos)) //Check if a castle can be performed
+                    {
+                        //true == black
+                        if (currentTurn)
+                        {
+                            //check if white is now in check
+                            whiteCheck = board.StateCheck(currentTurn);
+                        }
+                        else
+                        {
+                            blackCheck = board.StateCheck(currentTurn);
+                        }
 
+                        break;
+                    }
+                    else
+                    {
+                        reset = true;
+                    }
                 }
                 else
                 {
