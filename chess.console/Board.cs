@@ -10,6 +10,7 @@ using static chess.console.Piece;
 using chess.console.ConsoleOrSpeech;
 using chess.console.Speech;
 using System.Runtime.ExceptionServices;
+using System.CodeDom.Compiler;
 
 namespace chess.console
 {
@@ -615,8 +616,233 @@ namespace chess.console
             //Move the piece to the new position
             index = this.IsThisMyPiece(currentTurn, startPos);
             pieces.ElementAt(index).Move(endPos[0], endPos[1]);
+           
             communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
+            
+        }
 
+
+        private void TempMovePiece(bool isBlack, int[] startPos, int[] endPos)
+        {
+            //If there is an enemy on the endPos. Kill it
+            int index = this.IsThisMyPiece(!isBlack, endPos);
+            string kill = "";
+            if (index != -1)
+            {
+                kill = GetPieceName(pieces[index].type);
+                pieces.RemoveAt(index); //Rest in piece
+            }
+
+            //Move the piece to the new position
+            index = this.IsThisMyPiece(isBlack, startPos);
+            pieces.ElementAt(index).Move(endPos[0], endPos[1]);
+        }
+
+
+
+        public bool CheckMate(bool isBlack)
+        {
+            //first we find the king position
+            int[] kingPosition = new int[2];
+            //find opposite color king, so we can see if a move put the opponent in check
+            foreach (var piece in pieces)
+            {
+                if (piece.isBlack == isBlack && piece.type == (int)Types.KING)//enemy king
+                {
+                    kingPosition[0] = piece.pos.x;
+                    kingPosition[1] = piece.pos.y;
+                }
+            }
+            return false;
+        }
+
+
+        // this function helps to determine if a player can get out of a check
+        //returns true if it can get out of it
+        private bool GenerateAllPossibleMoves(int[] kingPos, Piece piece)
+        {
+            int[] oldPos = new int[2];
+            int[] newTryPos = new int[2];
+            oldPos[0] = piece.pos.x;
+            oldPos[1] = piece.pos.y;
+
+            if (piece.type == (int)Types.KING)
+            {
+                //king can move 1 square any direction
+                for (int y = -1; y < 2; y++)
+                {
+                    for (int x = -1; x < 2; x++)
+                    {
+                        if (x != 0 && y != 0)//can't move to it's own space
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (piece.type == (int)Types.QUEEN)
+            {
+                //queen can move along any line, horizontally, vertically or diagonally
+                for (int y = -7; y < 8; y++)
+                {
+                    for (int x = -7; x < 8; x++)
+                    {
+                        if((x == 0 || y == 0 || Math.Abs(x) == Math.Abs(y)) && !(x == 0 && y == 0)) //horizontal or vertical movement or diagonal movement 
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                } 
+                            }
+                        }
+                    }
+                }
+            }
+            else if (piece.type == (int)Types.PAWN)
+            {
+                //pawn can move one step "forward" or diagonally forward if it can take out a piece
+                //black pawns can only move "down" in board space, and white pawns can only move "up" in board space
+                int y = 1; // move up
+                if(piece.isBlack)
+                {
+                    y = -1; // move down
+                }
+                for(int x = -1; x < 2; x++)
+                {
+                    Board tempBoard = new Board();
+                    tempBoard = this;
+                    newTryPos[0] = piece.pos.x + x;
+                    newTryPos[1] = piece.pos.y + y;
+                    if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                    {
+                        tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                        if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                        {
+                            //got out of checkmate
+                            return true;
+                        }
+                    }
+                }
+            }
+            else if (piece.type == (int)Types.BISHOP)
+            {
+                //bishops can move along any  diagonal line
+                for (int y = -7; y < 8; y++)
+                {
+                    for (int x = -7; x < 8; x++)
+                    {
+                        if (Math.Abs(x) == Math.Abs(y) && x != 0) //  diagonal movement 
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (piece.type == (int)Types.ROOK)
+            {
+                //rook can move along horizontal or vertical line
+                for (int y = -7; y < 8; y++)
+                {
+                    for (int x = -7; x < 8; x++)
+                    {
+                        if ((x == 0 || y == 0 ) && !(x == 0 && y == 0)) //horizontal or vertical movement 
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (piece.type == (int)Types.KNIGHT)
+            {
+                //kngiht moves in a way only Magnus Carlsen can explain. 1 2 or 2 1
+                for (int y = -2; y < 3; y++)
+                {
+                    for (int x = -2; x < 3; x++)
+                    {
+                        //Check if horizontal move is 2 and vertical move is 1
+                        if (Math.Abs(oldPos[0] - x) == 2 && Math.Abs(oldPos[1] - y) == 1)
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                }
+                            }
+                        }
+                        //Check if horizontal move is 1 and vertical move is 2
+                        else if (Math.Abs(oldPos[0] - x) == 1 && Math.Abs(oldPos[1] - y) == 2)
+                        {
+                            Board tempBoard = new Board();
+                            tempBoard = this;
+                            newTryPos[0] = piece.pos.x + x;
+                            newTryPos[1] = piece.pos.y + y;
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos))
+                            {
+                                tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
+                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                {
+                                    //got out of checkmate
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
+
+
 }
