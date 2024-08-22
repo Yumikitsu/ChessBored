@@ -21,8 +21,16 @@ namespace chess.console
             //Check if the new positions are legal
             if (x >= 1 && y >= 1 && x <= 8 && y <= 8)
             {
-                //Check if the distance moved in x is 1 and distance moved in y is 1
-                if(Math.Abs(pos.x - x) == 1 && Math.Abs(pos.y - y) == 1)
+                //Check if the distance moved diagonally is 1
+                if (Math.Abs(pos.x - x) == 1 && Math.Abs(pos.y - y) == 1)
+                {
+                    return true;
+                }
+                else if (Math.Abs(pos.x - x) == 1 && Math.Abs(pos.y - y) == 0) //Distance moved in x is 1
+                {
+                    return true;
+                }
+                else if (Math.Abs(pos.x - x) == 0 && Math.Abs(pos.y - y) == 1) //Distance moved in y is 1
                 {
                     return true;
                 }

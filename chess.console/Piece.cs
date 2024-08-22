@@ -36,7 +36,7 @@ namespace chess.console
         public int type { get; set; }
 
         //First move
-        protected bool firstMove = true;
+        public bool firstMove = true;
 
         //Color (Black/White)
         public bool isBlack { get; set; }
