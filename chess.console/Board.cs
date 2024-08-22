@@ -519,9 +519,27 @@ namespace chess.console
         }
 
        
-
+        public bool StateCheck(bool isBlackKing)
+        {
+            int[] ints = new int[2];
+            //find opposite color king, so we can see if a move put the opponent in check
+            foreach (var piece in pieces)
+            {
+                if (piece.isBlack != isBlackKing && piece.type == (int)Types.KING)//enemy king
+                {
+                    ints[0] = piece.pos.x;
+                    ints[1] = piece.pos.y;
+                    if(CheckCheck(ints, !isBlackKing))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        }
         //returns false if everything is fine, returns true for check 
-        public bool CheckCheck(int[] kingPosition, bool isBlackKing)
+        private bool CheckCheck(int[] kingPosition, bool isBlackKing)
         {
             foreach (var piece in pieces)
             {
@@ -596,8 +614,9 @@ namespace chess.console
 
             //Move the piece to the new position
             index = this.IsThisMyPiece(currentTurn, startPos);
-            communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
             pieces.ElementAt(index).Move(endPos[0], endPos[1]);
+            communicate.SendMessage(SpeechPreparer(startPos, endPos, GetPieceName(pieces[index].type), currentTurn, kill), speechCommunicator);
+
         }
     }
 }

@@ -14,6 +14,9 @@ namespace chess.console
             {'a', 1}, {'b', 2}, {'c', 3}, {'d', 4}, {'e', 5}, {'f', 6}, {'g', 7}, {'h', 8}
         };
 
+        private bool whiteCheck = false;
+        private bool blackCheck = false;
+
         //Get the coordinates from two letters
         private int[] GetCoordinates(char firstLetter, char secondLetter)
         {
@@ -98,6 +101,18 @@ namespace chess.console
                     {
                         //Move piece and kill enemy if they are on the endPos
                         board.MovePiece(currentTurn, startPos, endPos);
+
+                        //true == black
+                        if(currentTurn)
+                        {
+                            //check if white is now in check
+                            whiteCheck = board.StateCheck(currentTurn);
+                        }
+                        else
+                        {
+                            blackCheck = board.StateCheck(currentTurn);
+                        }
+
                         break;
                     }
 

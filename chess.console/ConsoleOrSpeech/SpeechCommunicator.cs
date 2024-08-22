@@ -14,7 +14,8 @@ namespace chess.console.ConsoleOrSpeech
         {
             SpeechSynthesizer synthesizer = new SpeechSynthesizer();
 
-            synthesizer.Speak(message);
+            //synthesizer.Speak(message);
+            synthesizer.SpeakAsync(message);
         }
     }
 }
