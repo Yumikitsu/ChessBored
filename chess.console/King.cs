@@ -8,8 +8,8 @@ namespace chess.console
 {
     public class King : Piece
     {
-        public King(bool isBlack, Position startPos)
-            : base((int)Types.KING, isBlack, startPos)
+        public King(bool isBlack, Position startPos, bool firstMove = true)
+            : base((int)Types.KING, isBlack, startPos, firstMove)
         {
 
         }

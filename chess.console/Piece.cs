@@ -36,7 +36,7 @@ namespace chess.console
         public int type { get; set; }
 
         //First move
-        protected bool firstMove = true;
+        public bool firstMove { get; set; }
 
         //Color (Black/White)
         public bool isBlack { get; set; }
@@ -48,12 +48,13 @@ namespace chess.console
         public bool isAlive { get; set; }
 
         //Constructor
-        protected Piece(int type, bool isBlack, Position pos)
+        protected Piece(int type, bool isBlack, Position pos, bool firstMove)
         {
             this.type = type;
             this.isBlack = isBlack;
             this.pos = pos;
             this.isAlive = true;
+            this.firstMove = firstMove;
         }
 
         //Override MoveLogic function

@@ -18,27 +18,12 @@ namespace chess.console
 {
     public class Board
     {
+        public Communicate communicate;
+        public ConsoleCommunicator consoleCommunicator;
+        public SpeechCommunicator speechCommunicator;
 
-
-        //struct BoardSquares
-        //{
-        //    int x = 0;
-        //    int y = 0;
-        //    bool occupied = false;
-
-        //    BoardSquares(int x, int y, bool occupied)
-        //    {
-        //        this.x = x;
-        //        this.y = y;
-        //        this.occupied = occupied;
-        //    }
-        //};
-
-
-
-        public Communicate communicate = new Communicate();
-        public ConsoleCommunicator consoleCommunicator = new ConsoleCommunicator();
-        public SpeechCommunicator speechCommunicator = new SpeechCommunicator();
+        //List of pieces
+        private List<Piece> pieces;
 
         public Dictionary<int, string> letters = new Dictionary<int, string> // helps printing letters
         {
@@ -54,7 +39,10 @@ namespace chess.console
 
         public Board()
         {
-            
+            this.communicate = new Communicate();
+            this.consoleCommunicator = new ConsoleCommunicator();
+            this.speechCommunicator = new SpeechCommunicator();
+            this.pieces = new List<Piece>();
 
             //Create and add and pieces to list
             for (int i = 1; i < 9; i++)
@@ -125,20 +113,40 @@ namespace chess.console
 
         }
 
-
-        public Board DeepCopy()
+        public Board DeepCopy(Board oldBoard)
         {
             string serializedObject = JsonConvert.SerializeObject(this);
-            return JsonConvert.DeserializeObject<Board>(serializedObject);
+            Board newBoard = JsonConvert.DeserializeObject<Board>(serializedObject);
+            newBoard.pieces.Clear();
+            foreach (Piece piece in pieces)
+            {
+                if (piece.type == (int)Types.PAWN)
+                {
+                    newBoard.pieces.Add(new Pawn(piece.isBlack, piece.pos, piece.firstMove));
+                }
+                else if (piece.type == (int)Types.KNIGHT)
+                {
+                    newBoard.pieces.Add(new Knight(piece.isBlack, piece.pos, piece.firstMove));
+                }
+                else if (piece.type == (int)Types.BISHOP)
+                {
+                    newBoard.pieces.Add(new Bishop(piece.isBlack, piece.pos, piece.firstMove));
+                }
+                else if (piece.type == (int)Types.QUEEN)
+                {
+                    newBoard.pieces.Add(new Queen(piece.isBlack, piece.pos, piece.firstMove));
+                }
+                else if (piece.type == (int)Types.KING)
+                {
+                    newBoard.pieces.Add(new King(piece.isBlack, piece.pos, piece.firstMove));
+                }
+                else if (piece.type == (int)Types.ROOK)
+                {
+                    newBoard.pieces.Add(new Rook(piece.isBlack, piece.pos, piece.firstMove));
+                }
+            }
+            return newBoard;
         }
-
-
-
-        //List of board positions
-        //  private List<BoardSquares> board = new List<BoardSquares>();
-
-        //List of pieces
-        private List<Piece> pieces = new List<Piece>();
 
         //Reset function
         public void ResetBoard()
@@ -407,27 +415,6 @@ namespace chess.console
                                 }
                             }
                         }
-                        //if (normalMove)
-                        //{
-
-
-                        //    foreach (var isKing in pieces)
-                        //    {
-                        //        if (isKing.type == (int)Piece.Types.KING && isKing.isBlack == pieces.ElementAt(firstIndex).isBlack)
-                        //        {
-                        //            int[] position = new int[2];
-                        //            position[0] = isKing.pos.x;
-                        //            position[1] = isKing.pos.y;
-
-                        //            // to check so a player does not put himself in check
-                        //            if (CheckCheck(position, pieces.ElementAt(firstIndex).isBlack))
-                        //            {
-                        //                //puts himself in check, not allowed
-                        //                return false;
-                        //            }
-                        //        }
-                        //    }
-                        //}
                         
                         //Check if the path is blocked
                         if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
@@ -707,7 +694,7 @@ namespace chess.console
                         if (x != 0 && y != 0)//can't move to it's own space
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy();
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -733,7 +720,7 @@ namespace chess.console
                         if((x == 0 || y == 0 || Math.Abs(x) == Math.Abs(y)) && !(x == 0 && y == 0)) //horizontal or vertical movement or diagonal movement 
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy();
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -761,7 +748,7 @@ namespace chess.console
                 for(int x = -1; x < 2; x++)
                 {
                     //Board tempBoard = new Board(pieces);
-                    Board tempBoard = this.DeepCopy();
+                    Board tempBoard = this.DeepCopy(this);
                     newTryPos[0] = piece.pos.x + x;
                     newTryPos[1] = piece.pos.y + y;
                     if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -785,7 +772,7 @@ namespace chess.console
                         if (Math.Abs(x) == Math.Abs(y) && x != 0) //  diagonal movement 
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy(); 
+                            Board tempBoard = this.DeepCopy(this); 
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -811,7 +798,7 @@ namespace chess.console
                         if ((x == 0 || y == 0 ) && !(x == 0 && y == 0)) //horizontal or vertical movement 
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy();
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -838,7 +825,7 @@ namespace chess.console
                         if (Math.Abs(oldPos[0] - x) == 2 && Math.Abs(oldPos[1] - y) == 1)
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy();
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -855,7 +842,7 @@ namespace chess.console
                         else if (Math.Abs(oldPos[0] - x) == 1 && Math.Abs(oldPos[1] - y) == 2)
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy();
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))

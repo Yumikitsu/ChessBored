@@ -9,8 +9,8 @@ namespace chess.console
 {
     public class Rook : Piece
     {
-        public Rook(bool isBlack, Position startPos)
-            : base((int)Types.ROOK, isBlack, startPos)
+        public Rook(bool isBlack, Position startPos, bool firstMove = true) 
+            : base((int)Types.ROOK, isBlack, startPos, firstMove )
         {
 
         }

@@ -13,8 +13,8 @@ namespace chess.console
 
         //Upgrade
 
-        public Pawn(bool isBlack, Position startPos)
-            : base((int)Types.PAWN, isBlack, startPos)
+        public Pawn(bool isBlack, Position startPos, bool firstMove = true)
+            : base((int)Types.PAWN, isBlack, startPos, firstMove)
         {
 
         }
