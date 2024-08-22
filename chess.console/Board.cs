@@ -394,16 +394,23 @@ namespace chess.console
                                 }
                             }
                         }
-                       if(pieces.ElementAt(firstIndex).type == (int)Piece.Types.KING)
-                       {
-                            //so king does not put himnself in check
-                            if(CheckCheck(endPos, pieces.ElementAt(firstIndex).isBlack))
+                        foreach (var isKing in pieces)
+                        {
+                            if (isKing.type == (int)Piece.Types.KING && isKing.isBlack == pieces.ElementAt(firstIndex).isBlack)
                             {
-                                //puts himself in check, not allowed
-                                return false;
-                            }
-                       }
+                                int[] position = new int[2];
+                                position[0] = isKing.pos.x;
+                                position[1] = isKing.pos.y;
 
+                                // to check so a player does not put himself in check
+                                if (CheckCheck(position, pieces.ElementAt(firstIndex).isBlack))
+                                {
+                                    //puts himself in check, not allowed
+                                    return false;
+                                }
+                            }
+                        }
+                        
                         //Check if the path is blocked
                         if (Math.Abs(startPos[0] - endPos[0]) != 0 && Math.Abs(startPos[1] - endPos[1]) == 0) //horizontal movement
                         {
