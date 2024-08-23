@@ -417,7 +417,7 @@ namespace chess.console
                         }
                         if (normalMove)
                         {
-                            Board tempBoard = DeepCopy();
+                            Board tempBoard = DeepCopy(this);
                             int secondIndex = this.IsThisMyPiece(currentTurn, startPos);
                             tempBoard.TempMovePiece(currentTurn, startPos, endPos);
 
@@ -720,10 +720,10 @@ namespace chess.console
                             Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
-                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
+                            if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, true))
                             {
                                 tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
-                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                if (!tempBoard.CheckCheck(newTryPos, piece.isBlack))
                                 {
                                     //got out of checkmate
                                     return true;
