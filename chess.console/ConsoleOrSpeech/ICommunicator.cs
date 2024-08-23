@@ -9,5 +9,6 @@ namespace chess.console.Speech
     public interface ICommunicator
     {
         void SendMessage(string message);
+        void SendNonAsyncMessage(string message);
     }
 }

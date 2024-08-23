@@ -12,5 +12,10 @@ namespace chess.console.Speech
         {
             communicator.SendMessage(message);
         }
+
+        public void SendNonAsyncMessage(string message, ICommunicator communicator)
+        {
+            communicator.SendNonAsyncMessage(message);
+        }
     }
 }

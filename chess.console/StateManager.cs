@@ -114,7 +114,8 @@ namespace chess.console
                                 board.communicate.SendMessage("Check!", board.consoleCommunicator);
                                 if (!board.CheckMate(currentTurn))
                                 {
-                                    board.communicate.SendMessage("Checkmate! Black player wins!", board.speechCommunicator);
+                                    board.PrintBoard();
+                                    board.communicate.SendNonAsyncMessage("Checkmate! Black player wins!", board.speechCommunicator);
                                     board.communicate.SendMessage("Checkmate! Black player wins!", board.consoleCommunicator);
                                     this.gameOn = false;
                                 }
@@ -128,7 +129,8 @@ namespace chess.console
                                 board.communicate.SendMessage("Check!", board.consoleCommunicator);
                                 if (!board.CheckMate(currentTurn))
                                 {
-                                    board.communicate.SendMessage("Checkmate! White player wins!", board.speechCommunicator);
+                                    board.PrintBoard();
+                                    board.communicate.SendNonAsyncMessage("Checkmate! White player wins!", board.speechCommunicator);
                                     board.communicate.SendMessage("Checkmate! White player wins!", board.consoleCommunicator);
                                     this.gameOn = false;
                                 }

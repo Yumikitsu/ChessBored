@@ -19,6 +19,13 @@ namespace chess.console.ConsoleOrSpeech
             synthesizer.SpeakAsyncCancelAll();
             synthesizer.SpeakAsync(message);
         }
+
+
+        public void SendNonAsyncMessage(string message)
+        {
+            synthesizer.SpeakAsyncCancelAll();
+            synthesizer.Speak(message);
+        }
         
     }
 }

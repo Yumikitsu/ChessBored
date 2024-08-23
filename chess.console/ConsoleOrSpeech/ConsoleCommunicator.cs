@@ -13,5 +13,10 @@ namespace chess.console.ConsoleOrSpeech
         {
             Console.WriteLine(message);
         }
+
+        public void SendNonAsyncMessage(string message)
+        {
+            //never used, interface wants it though
+        }
     }
 }
