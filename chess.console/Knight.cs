@@ -9,8 +9,8 @@ namespace chess.console
 {
     public class Knight : Piece
     {
-        public Knight(bool isBlack, Position startPos)
-            : base((int)Types.KNIGHT, isBlack, startPos)
+        public Knight(bool isBlack, Position startPos, bool firstMove = true)
+            : base((int)Types.KNIGHT, isBlack, startPos, firstMove)
         {
 
         }
