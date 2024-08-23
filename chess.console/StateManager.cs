@@ -116,7 +116,7 @@ namespace chess.console
                                 {
                                     board.communicate.SendMessage("Checkmate! Black player wins!", board.speechCommunicator);
                                     board.communicate.SendMessage("Checkmate! Black player wins!", board.consoleCommunicator);
-
+                                    this.gameOn = false;
                                 }
                             }
                         }
@@ -130,6 +130,7 @@ namespace chess.console
                                 {
                                     board.communicate.SendMessage("Checkmate! White player wins!", board.speechCommunicator);
                                     board.communicate.SendMessage("Checkmate! White player wins!", board.consoleCommunicator);
+                                    this.gameOn = false;
                                 }
                             }
                         }

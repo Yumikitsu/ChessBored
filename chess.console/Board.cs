@@ -13,6 +13,7 @@ using System.Runtime.ExceptionServices;
 using System.CodeDom.Compiler;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 
 namespace chess.console
 {
@@ -477,12 +478,17 @@ namespace chess.console
                         {
                             if (startPos[0] < endPos[0] && startPos[1] < endPos[1]) //Moving up right
                             {
-                                for(int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++)
+                                for(int i = 1; i < Math.Abs(startPos[0] - endPos[0]); i++) //This needs fixing
                                 {
                                     if (IsThereAPieceHere(startPos[0] + i, startPos[1] + i))
                                     {
                                         return false;
                                     }
+                                }
+
+                                if(IsThisMyPiece(currentTurn, endPos) != -1) //Check if the end position is occupied by your own piece or if it is occupied by the enemy king
+                                {
+                                    return false;
                                 }
                             }
                             else if(startPos[0] > endPos[0] && startPos[1] > endPos[1]) //Moving down left
@@ -494,6 +500,11 @@ namespace chess.console
                                         return false;
                                     }
                                 }
+
+                                if (IsThisMyPiece(currentTurn, endPos) != -1) //Check if the end position is occupied by your own piece or if it is occupied by the enemy king
+                                {
+                                    return false;
+                                }
                             }
                             else if (startPos[0] < endPos[0] && startPos[1] > endPos[1]) //Moving down right
                             {
@@ -504,6 +515,11 @@ namespace chess.console
                                         return false;
                                     }
                                 }
+
+                                if (IsThisMyPiece(currentTurn, endPos) != -1) //Check if the end position is occupied by your own piece or if it is occupied by the enemy king
+                                {
+                                    return false;
+                                }
                             }
                             else //Moving up left
                             {
@@ -513,6 +529,11 @@ namespace chess.console
                                     {
                                         return false;
                                     }
+                                }
+
+                                if (IsThisMyPiece(currentTurn, endPos) != -1) //Check if the end position is occupied by your own piece or if it is occupied by the enemy king
+                                {
+                                    return false;
                                 }
                             }
                         }
@@ -553,7 +574,6 @@ namespace chess.console
                     int[] ints = new int[2];
                     ints[0] = piece.pos.x;
                     ints[1] = piece.pos.y;
-
                     if (CanMovePiece(piece.isBlack, ints, kingPosition, false))
                     {
                         //piece can move here, aka check
@@ -726,11 +746,6 @@ namespace chess.console
             }
             return false;
         }
-    }
-}
-           
-
-
         private void TempMovePiece(bool isBlack, int[] startPos, int[] endPos)
         {
             //If there is an enemy on the endPos. Kill it
@@ -767,7 +782,7 @@ namespace chess.console
             {
                 if (piece.isBlack != currentTurn) //can the enemy make any move that saves them?
                 {
-                    if(GenerateAllPossibleMoves(kingPosition, piece))
+                    if (GenerateAllPossibleMoves(kingPosition, piece))
                     {
                         return true;
                     }
@@ -778,7 +793,7 @@ namespace chess.console
 
 
 
-        
+
 
         // this function helps to determine if a player can get out of a check
         //returns true if it can get out of it
@@ -805,7 +820,7 @@ namespace chess.console
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
                             {
                                 tempBoard.TempMovePiece(piece.isBlack, oldPos, newTryPos);
-                                if (!tempBoard.CheckCheck(kingPos, piece.isBlack))
+                                if (!tempBoard.CheckCheck(newTryPos, piece.isBlack))
                                 {
                                     //got out of checkmate
                                     return true;
@@ -822,7 +837,7 @@ namespace chess.console
                 {
                     for (int x = -7; x < 8; x++)
                     {
-                        if((x == 0 || y == 0 || Math.Abs(x) == Math.Abs(y)) && !(x == 0 && y == 0)) //horizontal or vertical movement or diagonal movement 
+                        if ((x == 0 || y == 0 || Math.Abs(x) == Math.Abs(y)) && !(x == 0 && y == 0)) //horizontal or vertical movement or diagonal movement 
                         {
                             //Board tempBoard = new Board(pieces);
                             Board tempBoard = this.DeepCopy(this);
@@ -835,7 +850,7 @@ namespace chess.console
                                 {
                                     //got out of checkmate
                                     return true;
-                                } 
+                                }
                             }
                         }
                     }
@@ -846,11 +861,11 @@ namespace chess.console
                 //pawn can move one step "forward" or diagonally forward if it can take out a piece
                 //black pawns can only move "down" in board space, and white pawns can only move "up" in board space
                 int y = 1; // move up
-                if(piece.isBlack)
+                if (piece.isBlack)
                 {
                     y = -1; // move down
                 }
-                for(int x = -1; x < 2; x++)
+                for (int x = -1; x < 2; x++)
                 {
                     //Board tempBoard = new Board(pieces);
                     Board tempBoard = this.DeepCopy(this);
@@ -877,7 +892,7 @@ namespace chess.console
                         if (Math.Abs(x) == Math.Abs(y) && x != 0) //  diagonal movement 
                         {
                             //Board tempBoard = new Board(pieces);
-                            Board tempBoard = this.DeepCopy(this); 
+                            Board tempBoard = this.DeepCopy(this);
                             newTryPos[0] = piece.pos.x + x;
                             newTryPos[1] = piece.pos.y + y;
                             if (tempBoard.CanMovePiece(piece.isBlack, oldPos, newTryPos, false))
@@ -900,7 +915,7 @@ namespace chess.console
                 {
                     for (int x = -7; x < 8; x++)
                     {
-                        if ((x == 0 || y == 0 ) && !(x == 0 && y == 0)) //horizontal or vertical movement 
+                        if ((x == 0 || y == 0) && !(x == 0 && y == 0)) //horizontal or vertical movement 
                         {
                             //Board tempBoard = new Board(pieces);
                             Board tempBoard = this.DeepCopy(this);
@@ -966,6 +981,4 @@ namespace chess.console
             return false;
         }
     }
-
-
 }
